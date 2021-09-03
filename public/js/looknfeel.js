@@ -5,7 +5,6 @@ var explanationText = document.querySelector("#explanation");
 // Look & Feel Definitions
 var lookAndFeelDefinitions = [
     {
-        audioFile: 'audio/1.mp3',
         bgImage: 'img/sean-oulashin-KMn4VEeEPR8-unsplash.jpeg',
         logoTextColour: '#EDEBEC',
         explanationTextColour: '#EDEBEC',
@@ -14,7 +13,6 @@ var lookAndFeelDefinitions = [
         breathingAnimationColour: [0x9D,0xB7,0xB8],
     },
     {
-        audioFile: 'audio/2.mp3',
         bgImage: 'img/elizeu-dias-RN6ts8IZ4_0-unsplash.jpg',
         logoTextColour: '#ffffff',
         explanationTextColour: '#ffffff',
@@ -23,7 +21,6 @@ var lookAndFeelDefinitions = [
         breathingAnimationColour: [0xb1, 0x99, 0x39],
     },
     {
-        audioFile: 'audio/3.mp3',
         bgImage: 'img/katerina-kerdi-yt1-v0TrOi8-unsplash.jpg',
         logoTextColour: '#ECEAEB',
         explanationTextColour: '#ECEAEB',
@@ -32,7 +29,6 @@ var lookAndFeelDefinitions = [
         breathingAnimationColour: [0x13, 0x56, 0x80],
     },
     {
-        audioFile: 'audio/4.mp3',
         bgImage: 'img/yang-wewe-H869_y8UJoI-unsplash.jpg',
         logoTextColour: '#E9EBE8',
         explanationTextColour: '#E9EBE8',
@@ -41,7 +37,6 @@ var lookAndFeelDefinitions = [
         breathingAnimationColour: [0x1c,0x44,0x89],
     },
     {
-        audioFile: 'audio/5.mp3',
         bgImage: 'img/anastasia-taioglou-EEDLURXCpqg-unsplash.jpg',
         logoTextColour: '#FFFFFF',
         explanationTextColour: '#FFFFFF',
@@ -62,8 +57,6 @@ function loadLookAndFeel(definitions) {
     textColour=definitions.generalTextColour;
     outlineColour=definitions.outlineColour;
     breathingAnimationColour=definitions.breathingAnimationColour;
-    bgAudio = definitions.audioFile;
-    preloadSound(definitions.audioFile);
 }
 
 var btnSelectors = document.getElementsByClassName('btn-looknfeel');
@@ -81,5 +74,4 @@ for (var i = 0; i < btnSelectors.length; i++) {
 afterP5jsSetup = function() {
     var defaultDefinitions = lookAndFeelDefinitions[0];
     loadLookAndFeel(defaultDefinitions);
-    preloadSound(defaultDefinitions.audioFile);
 }

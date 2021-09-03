@@ -2,7 +2,6 @@
 textColour = null;
 outlineColour = null;
 breathingAnimationColour = null;
-bgAudio = null;
 
 const breathInOutLenSec = 5;
 const animFrameRate = 30;
@@ -42,36 +41,6 @@ var durations = [
 	{ x: 20, y: 160, minutes: 2, selected: false },
 	{ x: 20, y: 230, minutes: 5, selected: false },
 ];
-
-var bgSound = {};
-var bgSoundFadeInSecs = 3;
-
-function preloadSound(soundFilename) {
-	// checks if there's anything already playing, and stop it if that is the case
-	var previouslyPlaying = false;
-	var allPreviouslyPlaying = resetBgSounds();
-	if (allPreviouslyPlaying.length > 0) {
-		console.log('"' + allPreviouslyPlaying[0] + '", previously playing.')
-		previouslyPlaying = true;
-	}
-	
-	// preload the incoming sound file, if it is new
-	if (soundFilename) {
-		var successCallback = function() {
-			console.log('"' + soundFilename + '", load completed.');
-			if (previouslyPlaying) {
-				console.log('"' + soundFilename + '", replacing previous playback.');
-				startPlayingWhenReady();
-			}
-		}
-		if (!bgSound[soundFilename]) {
-			console.log('"' + soundFilename + '", load started...');			
-			bgSound[soundFilename] = loadSound(soundFilename, successCallback);
-		}
-		else if (previouslyPlaying)
-			successCallback();
-	}
-}
 
 function preload() {
 	sarinaFont = loadFont('fonts/Sarina-Regular.ttf');
@@ -218,17 +187,6 @@ function breathe() {
 	}
 }
 
-function resetBgSounds() {
-	var previouslyPlaying = [];
-	for (var bgSoundKey in bgSound)
-		if (bgSound[bgSoundKey].isPlaying()) {
-			bgSound[bgSoundKey].setVolume(0.0, bgSoundFadeInSecs);
-			bgSound[bgSoundKey].stop(bgSoundFadeInSecs);
-			previouslyPlaying.push(bgSoundKey);
-		}
-	return previouslyPlaying;
-}
-
 function reset() {
 	running = false;
 	startedAt = 0;
@@ -236,7 +194,6 @@ function reset() {
 	breathing = BREATH_IN;
 	breathCount = 0;
 	breathHold = 0;
-	resetBgSounds();
 }
 
 function mousePressed() {
@@ -265,15 +222,6 @@ function mousePressedIfOnBreathingAnimation() {
 					}
 				animLength = selectedDuration.minutes*60;
 			}
-
-			// ======================================================
-			// audio: start
-			// ======================================================
-			// the audio may still be downloading if the user clicked
-			// on start before the audio was downloaded. In that case
-			// we keep rescheduling the start until it's ready or
-			// until the animation finishes
-			setTimeout(startPlayingWhenReady, 1000);
 		}
 	}
 }
@@ -290,19 +238,6 @@ function mousePressedIfOnDurationSelector() {
 				return;
 			}
 		}
-	}
-}
-
-function startPlayingWhenReady() {
-	if (running && bgAudio && bgSound[bgAudio]) {
-		if (bgSound[bgAudio].isLoaded()) {
-			bgSound[bgAudio].setVolume(0.0);
-			bgSound[bgAudio].play();
-			bgSound[bgAudio].setVolume(1.0, bgSoundFadeInSecs);
-			bgSound[bgAudio].setLoop(true);
-		}
-		else
-			setTimeout(startPlayingWhenReady, 1000);
 	}
 }
 
