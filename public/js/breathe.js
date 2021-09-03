@@ -38,8 +38,6 @@ var durationOpacity = 255;
 var durationSelSize = 35;
 var durations = [
 	{ x: 20, y:  90, minutes: 1, selected: true },
-	{ x: 20, y: 160, minutes: 2, selected: false },
-	{ x: 20, y: 230, minutes: 5, selected: false },
 ];
 
 function preload() {
@@ -67,7 +65,6 @@ function draw() {
 	noStroke();
 
 	drawBreathingAnimation();
-	drawDurationSelector();
 	
 	if (running) {
 		breathe();
@@ -118,27 +115,6 @@ function drawText() {
 				break;
 		}
 	}
-}
-
-function drawDurationSelector() {
-	for (var i = 0; i < durations.length; i++) {
-		fill(breathingAnimationColour[0], breathingAnimationColour[1], breathingAnimationColour[2], durationOpacity);
-		strokeWeight(2);
-		if (durations[i].selected || animLength == durations[i].minutes*60)
-			stroke(outlineColour[0], outlineColour[1], outlineColour[2], durationOpacity);
-		else
-			stroke(255, 255, 255, Math.min(40, durationOpacity));
-		ellipse(durations[i].x, durations[i].y, durationSelSize);
-		textAlign(CENTER, CENTER);
-		noStroke();
-		fill(textColour[0], textColour[1], textColour[2], durationOpacity);
-		textSize(16);
-		text(""+durations[i].minutes+'"', durations[i].x + 3, durations[i].y - 1);
-	}
-	if (!running)
-		durationOpacity = Math.min(durationOpacity + durationFadeRate, 255)
-	else
-		durationOpacity = Math.max(durationOpacity - durationFadeRate, 0)
 }
 
 function breathe() {
@@ -198,7 +174,6 @@ function reset() {
 
 function mousePressed() {
 	mousePressedIfOnBreathingAnimation();
-	mousePressedIfOnDurationSelector();
 }
 
 function mousePressedIfOnBreathingAnimation() {
@@ -221,21 +196,6 @@ function mousePressedIfOnBreathingAnimation() {
 						break;
 					}
 				animLength = selectedDuration.minutes*60;
-			}
-		}
-	}
-}
-
-function mousePressedIfOnDurationSelector() {
-	if (!running) {
-		for (var i = 0; i < durations.length; i++) {
-			var duration = durations[i];
-			var d = dist(mouseX, mouseY, duration.x, duration.y);
-			var clickedOnSelector = (d < durationSelSize / 2);
-			if (clickedOnSelector) {
-				for (var j = 0; j < durations.length; j++) durations[j].selected = false;
-				duration.selected = true;
-				return;
 			}
 		}
 	}
