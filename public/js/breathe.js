@@ -13,7 +13,9 @@ const breatHoldFrameCnt = breathHoldSec * animFrameRate;
 var chakraImage;
 var chakraProportion = 0.8;
 var running = false;
-var afterP5jsSetup = null;
+
+var afterP5jsSetupSync = null;
+var afterP5jsSetupAsync = null;
 
 var diameter = 0.0;
 var currentDiameter = 0.0;
@@ -59,7 +61,6 @@ function setup() {
 	
 	var diameterMaxChange = diameter - (diameter * minDiameterProportion);
 	animStep = diameterMaxChange / breathInOutFrameCnt;
-	
 	frameRate(animFrameRate);
 	setTimeout(() => preloadSound(bgAudio), 50);
 }
