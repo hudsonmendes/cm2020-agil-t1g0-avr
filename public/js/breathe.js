@@ -2,7 +2,7 @@
 textColour = [0xED,0xEB,0xEC];
 outlineColour = [0xED,0xEB,0xEC];
 breathingAnimationColour = [0x9D,0xB7,0xB8];
-bgAudio = null;
+bgAudio = 'audio/1.mp3';
 
 const breathInOutLenSec = 5;
 const animFrameRate = 30;
@@ -29,48 +29,20 @@ var breathCount = 0;
 var breathHold = 0;
 
 var startedAt = 0;
-var animLength = 0;
+var animLength = 60;
 var animWidth = 0;
 var animStep = 0;
 var midnight = Math.PI*1.5;
-
-var durationFadeRate = 10;
-var durationOpacity = 255;
-var durationSelSize = 35;
-var durations = [
-	{ x: 20, y:  90, minutes: 1, selected: true },
-	{ x: 20, y: 160, minutes: 2, selected: false },
-	{ x: 20, y: 230, minutes: 5, selected: false },
-];
 
 var bgSound = {};
 var bgSoundFadeInSecs = 3;
 
 function preloadSound(soundFilename) {
-	// checks if there's anything already playing, and stop it if that is the case
-	var previouslyPlaying = false;
-	var allPreviouslyPlaying = resetBgSounds();
-	if (allPreviouslyPlaying.length > 0) {
-		console.log('"' + allPreviouslyPlaying[0] + '", previously playing.')
-		previouslyPlaying = true;
-	}
-	
 	// preload the incoming sound file, if it is new
-	if (soundFilename) {
-		var successCallback = function() {
-			console.log('"' + soundFilename + '", load completed.');
-			if (previouslyPlaying) {
-				console.log('"' + soundFilename + '", replacing previous playback.');
-				startPlayingWhenReady();
-			}
-		}
-		if (!bgSound[soundFilename]) {
-			console.log('"' + soundFilename + '", load started...');			
-			bgSound[soundFilename] = loadSound(soundFilename, successCallback);
-		}
-		else if (previouslyPlaying)
-			successCallback();
-	}
+	console.log('"' + soundFilename + '", load started...');			
+	bgSound[soundFilename] = loadSound(
+		soundFilename,
+		() => console.log('"' + soundFilename + '", load completed.'));
 }
 
 function preload() {
@@ -89,8 +61,7 @@ function setup() {
 	animStep = diameterMaxChange / breathInOutFrameCnt;
 	
 	frameRate(animFrameRate);
-	if (afterP5jsSetup && typeof(afterP5jsSetup) == 'function')
-		afterP5jsSetup.apply();
+	setTimeout(() => preloadSound(bgAudio), 50);
 }
 
 function draw() {
@@ -98,7 +69,6 @@ function draw() {
 	noStroke();
 
 	drawBreathingAnimation();
-	drawDurationSelector();
 	
 	if (running) {
 		breathe();
@@ -149,27 +119,6 @@ function drawText() {
 				break;
 		}
 	}
-}
-
-function drawDurationSelector() {
-	for (var i = 0; i < durations.length; i++) {
-		fill(breathingAnimationColour[0], breathingAnimationColour[1], breathingAnimationColour[2], durationOpacity);
-		strokeWeight(2);
-		if (durations[i].selected || animLength == durations[i].minutes*60)
-			stroke(outlineColour[0], outlineColour[1], outlineColour[2], durationOpacity);
-		else
-			stroke(255, 255, 255, Math.min(40, durationOpacity));
-		ellipse(durations[i].x, durations[i].y, durationSelSize);
-		textAlign(CENTER, CENTER);
-		noStroke();
-		fill(textColour[0], textColour[1], textColour[2], durationOpacity);
-		textSize(16);
-		text(""+durations[i].minutes+'"', durations[i].x + 3, durations[i].y - 1);
-	}
-	if (!running)
-		durationOpacity = Math.min(durationOpacity + durationFadeRate, 255)
-	else
-		durationOpacity = Math.max(durationOpacity - durationFadeRate, 0)
 }
 
 function breathe() {
@@ -241,7 +190,6 @@ function reset() {
 
 function mousePressed() {
 	mousePressedIfOnBreathingAnimation();
-	mousePressedIfOnDurationSelector();
 }
 
 function mousePressedIfOnBreathingAnimation() {
@@ -256,15 +204,6 @@ function mousePressedIfOnBreathingAnimation() {
 			// breathing animation: start
 			currentDiameter = diameter * minDiameterProportion;
 			startedAt = getCurrentSec();
-			if (animLength == 0) {
-				var selectedDuration = durations[0];
-				for (var i = 0; i < durations.length; i++)
-					if (durations[i].selected) {
-						selectedDuration = durations[i];
-						break;
-					}
-				animLength = selectedDuration.minutes*60;
-			}
 
 			// ======================================================
 			// audio: start
@@ -274,21 +213,6 @@ function mousePressedIfOnBreathingAnimation() {
 			// we keep rescheduling the start until it's ready or
 			// until the animation finishes
 			setTimeout(startPlayingWhenReady, 1000);
-		}
-	}
-}
-
-function mousePressedIfOnDurationSelector() {
-	if (!running) {
-		for (var i = 0; i < durations.length; i++) {
-			var duration = durations[i];
-			var d = dist(mouseX, mouseY, duration.x, duration.y);
-			var clickedOnSelector = (d < durationSelSize / 2);
-			if (clickedOnSelector) {
-				for (var j = 0; j < durations.length; j++) durations[j].selected = false;
-				duration.selected = true;
-				return;
-			}
 		}
 	}
 }
