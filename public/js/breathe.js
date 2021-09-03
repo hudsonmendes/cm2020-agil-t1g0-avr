@@ -1,7 +1,7 @@
 // This global gets changed by the selector buttons
-textColour = null;
-outlineColour = null;
-breathingAnimationColour = null;
+textColour = [0xED,0xEB,0xEC];
+outlineColour = [0xED,0xEB,0xEC];
+breathingAnimationColour = [0x9D,0xB7,0xB8];
 
 const breathInOutLenSec = 5;
 const animFrameRate = 30;
